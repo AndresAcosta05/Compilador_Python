@@ -86,26 +86,25 @@ class Compilador:
             nueva = str(linea['texto'])
             # validamos que la linea finalice en ;
             if not nueva.endswith(';'):
-                messagebox.showerror('Error al compilar', 'No hay finalizacion de comando. Linea ' + str(linea['Linea']))
+                messagebox.showerror('Error al compilar', 'No hay finalizacion de comando (;). Linea ' + str(linea['Linea']))
                 return
-            
-            # validamos si esta intentando dar un mensaje
-            elif re.match(r'Mensaje\.Texto\("[\w*\s*\w*]*"\);', nueva):
-                division = nueva.split('"')
-                messagebox.showinfo('Mensaje Usuario', division[1])
-                continue
-
-            # validamos si esta intentando crear una variable
+                       
+            # validamos si esta usando los identificadores de variables
             elif re.search(r'Entero|Real|Texto', nueva):
                 if re.match(r'[a-zA-Z]\w* (Entero|Real|Texto);', nueva):
                     continue
+
+                 # validamos si esta intentando dar un mensaje
+                elif re.match(r'Mensaje\.Texto\("[\w*\s*\w*]*"\);', nueva):
+                    division = nueva.split('"')
+                    messagebox.showinfo('Mensaje Usuario', division[1])
+                    continue
+
                 else:
-                    messagebox.showerror('Error de creacion en Linea ' + str(linea['Linea']), 'Esta intentando crear una variable de la forma incorrecta. \n Pruebe: Nombre_Var Tipo;')
+                    messagebox.showerror('Error de creacion en Linea ' + str(linea['Linea']), 'Esta intentando crear una variable  o mensaje de la forma incorrecta. \n Pruebe: Nombre_Var Tipo; \n Mensaje.Texto("TEXTO")')
                     break
             
             # no se reconocio el comando
             else: 
-                messagebox.showerror('Error en la Linea ' + str(linea['Linea']), 'Comando o expresion invalida')
+                messagebox.showerror('Error en la Linea ' + str(linea['Linea']), 'Comando o expresion invalida, Intente: \n\nASIGNACION: variable=variable o expreion;\n\nMENSAJE: Mensaje.Texto("TEXTO"); \n\nCREAR: variable TIPO(Entero, Real, Texto);')
                 break
-            
-            
