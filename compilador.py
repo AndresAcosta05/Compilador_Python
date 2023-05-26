@@ -103,6 +103,8 @@ class Compilador:
                 else:
                     messagebox.showerror('Error de creacion en Linea ' + str(linea['Linea']), 'Esta intentando crear una variable  o mensaje de la forma incorrecta. \n Pruebe: Nombre_Var Tipo; \n Mensaje.Texto("TEXTO")')
                     break
+            elif re.match(r'[a-zA-Z]\w*\s?=[\D,0-9]',nueva):
+                continue
             
             # no se reconocio el comando
             else: 
