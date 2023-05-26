@@ -109,7 +109,7 @@ class Compilador:
                     continue
 
                 # validacion de asignaciones para expresiones como suma=num1+(num2*num3);
-                elif re.match(r'[a-zA-Z]\w*\s*=\s*[a-zA-Z]\w*\s*(\+|-|\*|\/)\s*\([a-zA-Z]\w*\s*(\+|-|\*|\/)\s*[a-zA-Z]\w*\s*\);', nueva):
+                elif re.match(r'[a-zA-Z]\w*\s*=\s*([a-zA-Z]\w*)?\s*(\+|-|\*|\/)?\s*\([a-zA-Z]\w*\s*(\+|-|\*|\/)\s*[a-zA-Z]\w*\s*\);', nueva):
                     continue
 
                 if re.match(r'[a-zA-Z]\w*\s?=\s?[a-zA-Z]\w*;', nueva):
