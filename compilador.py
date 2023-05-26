@@ -81,6 +81,7 @@ class Compilador:
 
     @classmethod
     def fase_sintactica(self, contenido_archivo):
+        ok = True
         for linea in contenido_archivo:
             # convertimos la linea a una cadena de texto para usar los metodos de la clase str
             nueva = str(linea['texto'])
@@ -88,6 +89,36 @@ class Compilador:
             if not nueva.endswith(';'):
                 messagebox.showerror('Error al compilar', 'No hay finalizacion de comando (;). Linea ' + str(linea['Linea']))
                 return
+            
+            # validamos si intenta crear una variable
+            elif re.match(r'[a-zA-Z]\w*\s?=',nueva):
+                if re.search('Captura|captura', nueva):
+                    if re.match(r'[a-zA-Z]\w*\s?=\s?Captura\.(Texto|Entero|Real)\(\);', nueva):
+                        continue
+                    else:
+                        messagebox.showerror('Error en la Linea ' + str(linea['Linea']), 'Captura de dato incorrecta')
+                        ok = False
+                        break
+
+                # validacion de asignacion de enteros
+                elif re.match(r'[a-zA-Z]\w*\s?=\s?\d*,?\d*;', nueva):
+                    continue
+
+                # validacion de asignacion para textos
+                elif re.match(r'[a-zA-Z]\w*\s?=\s?("|“)[\w*\s*\w*]*("|”);', nueva):
+                    continue
+
+                # validacion de asignaciones para expresiones como suma=num1+(num2*num3);
+                elif re.match(r'[a-zA-Z]\w*\s*=\s*[a-zA-Z]\w*\s*(\+|-|\*|\/)\([a-zA-Z]\w*\s*(\+|-|\*|\/)[a-zA-Z]\w*\s*\);', nueva):
+                    continue
+
+                if re.match(r'[a-zA-Z]\w*\s?=\s?[a-zA-Z]\w*;', nueva):
+                    continue
+
+                else:
+                    messagebox.showerror('Error en la Linea ' + str(linea['Linea']), 'Asignacion de valor a variable incorrecta')
+                    ok = False
+                    break
                        
             # validamos si esta usando los identificadores de variables
             elif re.search(r'Entero|Real|Texto', nueva):
@@ -102,11 +133,13 @@ class Compilador:
 
                 else:
                     messagebox.showerror('Error de creacion en Linea ' + str(linea['Linea']), 'Esta intentando crear una variable  o mensaje de la forma incorrecta. \n Pruebe: Nombre_Var Tipo; \n Mensaje.Texto("TEXTO")')
+                    ok = False
                     break
-            elif re.match(r'[a-zA-Z]\w*\s?=[\D,0-9]',nueva):
-                continue
-            
+
             # no se reconocio el comando
             else: 
                 messagebox.showerror('Error en la Linea ' + str(linea['Linea']), 'Comando o expresion invalida, Intente: \n\nASIGNACION: variable=variable o expreion;\n\nMENSAJE: Mensaje.Texto("TEXTO"); \n\nCREAR: variable TIPO(Entero, Real, Texto);')
+                ok = False
                 break
+        
+        if ok: messagebox.showinfo('Excelente', 'Su codigo funciona bien')
